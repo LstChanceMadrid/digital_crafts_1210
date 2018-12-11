@@ -6,7 +6,7 @@ export default class Nav extends Component {
     return (
       <div>
         <Link to="/">Home</Link>
-        <Link to="/order">Orders</Link>
+        <Link to="/coffee/order">Orders</Link>
         <Link to="/">Home</Link>
       </div>
     )

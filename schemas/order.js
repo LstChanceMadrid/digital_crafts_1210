@@ -1,12 +1,10 @@
 const mongoose = require('mongoose')
 
 const orderSchema = new mongoose.Schema({
-    firstname : "string",
-    email : "string",
-    coffeename : "string",
-    price : "decimal",
-    date : 'date',
-    totalprice : "decimal"
+    name : String,
+    email : String,
+    coffeeType : String,
+    date : {type: Date, default: Date.now},
 })
 
 const Order = mongoose.model('Order', orderSchema)
