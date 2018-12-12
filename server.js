@@ -23,11 +23,15 @@ db.once('open', () => {
     console.log('connected to mongodb')
 })
 
-
 // const COFFEE_API_URL = "https://raw.githubusercontent.com/CoffeeJson/json/gh-pages/coffee.json"
 
+app.get('/coffee/orders', (req, res) => {
+    Order.find({},(error, orders) => {
+        res.json(orders)
+    })
+})
 
-app.post("/coffee", (req, res) => {
+app.post("/place-order", (req, res) => {
     let coffeeType = req.body.coffeeType
     let email = req.body.email
     let name = req.body.name
@@ -41,11 +45,38 @@ app.post("/coffee", (req, res) => {
 })
 
 
-app.get('/coffee/orders', (req, res) => {
-    Order.find({},(error, orders) => {
-        res.json(orders)
-    })
+
+
+
+
+app.post("/update/:orderId/order", (req, res) => {
+    console.log('in the server')
+    let orderId = req.params.orderId
+    console.log(orderId)
+    let name = req.body.name
+    let email = req.body.email
+    let coffeeType = req.body.coffeeType
+    
+    let updatedOrder = new Order({name : name, email : email, coffeeType : coffeeType})
+
+    Order.findOneAndUpdate({
+        _id : orderId
+    }, {
+        $push : {orders : updatedOrder}
+    }, {
+        upsert : true,
+        returnNewDocument: true
+    }
+    ), (error, order) => {
+        if (error) {
+            console.log(error)
+        } else {
+            res.json(order)
+        }
+    }
 })
+
+
 
 
 

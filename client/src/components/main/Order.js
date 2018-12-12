@@ -31,36 +31,88 @@ class Order extends Component {
         })
     }
 
+    placeOrder = () => {
+        const PLACE_ORDER_URL = "http://localhost:5000/place-order"
+        let name = document.getElementById('name').value
+        let email = document.getElementById('email').value
+        let coffeeType = document.getElementById('coffee-type').value
+        
+        axios.post(PLACE_ORDER_URL, {
+            name : name,
+            email : email,
+            coffeeType : coffeeType
+        }).then(response => {
+            this.setState({
+                ...this.state,
+                orders : [
+                    ...this.state.orders,
+                    response.data
+                ]
+            })
+        })
+    }
+
+
+
+
+
+    updateCoffee = (orderId) => {
+        // make a fetch post with the orderId in the url
+        const UPDATE_ORDER_URL = `http://localhost:5000/update/${orderId}/order`
+        let name = document.getElementById(orderId + "-name").value
+        let email = document.getElementById(orderId + "-email").value
+        let coffeeType = document.getElementById(orderId + "-coffee-type").value
+
+        axios.post(UPDATE_ORDER_URL, {
+            name : name,
+            email : email,
+            coffeeType : coffeeType
+        }).then(response => {
+            console.log(response)
+        })
+            
+    }
+
+    showUpdateForm = () => {
+        document.getElementsByClassName('update-form').display = "flex"
+    }
 
 
   render() {
 
     let orderItems = this.state.orders.map((order, index) => {
-        return <li key={order._id}>{order.name}, {order.email}, {order.coffeeType}, {order._id}, {order.date}</li>
+        return (
+        <li key={order._id}>{order.name}, {order.email}, {order.coffeeType}, {order._id}, {order.date} <button onClick={this.showUpdateForm}>Update</button><button>cancel order</button>
+        <div className="update-form">
+            <label>Name</label>
+            <input id={`${order._id}-name`} type="text" name="name" defaultValue={order.name} placeholder="Name" />
+            <label>Email</label>
+            <input id={`${order._id}-email`} type="text"  name="email" defaultValue={order.email} placeholder="Email" />
+            <label>Coffee Type</label>
+            <select id={`${order._id}-coffee-type`} name="coffeeType">
+                <option defaultValue>{order.coffeeType}</option>
+                <option value="Hot">Hot</option>
+                <option value="Ice">Ice</option>
+            </select>
+            <button onClick={() => this.updateCoffee(order._id)}>Confirm Update</button>
+        </div>
+        </li>)
     })
 
     return (
       <div>
         <h1>Order Page</h1>
         <label>Name</label>
-        <input type="text" name="name" placeholder="Name" />
+        <input id="name" type="text" name="name" placeholder="Name" />
         <label>Email</label>
-        <input type="text"  name="email" placeholder="Email" />
+        <input id="email" type="text"  name="email" placeholder="Email" />
         <label>Coffee Type</label>
         <select id="coffee-type" name="coffeeType">
             <option defaultValue>Select Coffee</option>
             <option value="Hot">Hot</option>
             <option value="Ice">Ice</option>
         </select>
-        <label>Size</label>
-        {/* <select name="size" >
-            <option defaultValue>Select Size</option>
-            <option value>small $</option>
-            <option value>medium $</option>
-            <option value>large $</option>
-            <option value>Extra Large $</option>
-        </select> */}
-        <button>Place Order</button>
+        <button onClick={this.placeOrder}>Place Order</button>
         <ul>
             {orderItems}
         </ul>
